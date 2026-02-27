@@ -32,3 +32,16 @@ Forever Store is a full-stack e-commerce web application for fashion retail with
 - MongoDB Atlas (Database Hosting)
 
 
+## 🔥 Key Features
+
+- User Authentication & Authorization (JWT-based)
+- Product Listing with Category Filtering
+- Add to Cart & Cart Management
+- Secure Online Payments using Stripe
+- Order Placement & Tracking
+- Admin Product Management (Add, Edit, Delete)
+- Admin Order Management & Status Updates
+- Cloud-based Image Upload with Cloudinary
+- Fully Responsive Design (Mobile & Desktop)
+
+---
