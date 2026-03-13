@@ -10,18 +10,14 @@ const Product = () => {
   const [productData,setProductData] = useState(false);
   const [image,setImage] = useState('');
   const [size, setSize] = useState('');
-  const fetchProductData = async()=>{
-    
-    products.map((item)=>{
-      if(item._id==productId){
-        setProductData(item)
-        if(item.images && item.images.length > 0) {
-          setImage(item.images[0]);
-        }
-        return null;
-        
+  const fetchProductData = async () => {
+    const item = products.find(item => item._id === productId);
+    if (item) {
+      setProductData(item);
+      if (item.images && item.images.length > 0) {
+        setImage(item.images[0]);
       }
-    })
+    }
   }
 
   useEffect(()=>{
@@ -72,7 +68,7 @@ const Product = () => {
           <hr  className='mt-8 sm:w-4/5'/>
           <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
               <p>100% Orignal Product</p>
-              <p>Cash on delivery is available on this procuct.</p>
+              <p>Cash on delivery is available on this product.</p>
               <p>Easy return and exchange policy within 7 days.</p>
           </div>
         </div>

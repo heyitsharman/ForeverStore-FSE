@@ -1,6 +1,7 @@
 //placing orders using cod
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
+import productModel from "../models/productModel.js";
 import Stripe from 'stripe';
 
 const currency = "INR";
@@ -8,9 +9,22 @@ const deliveryCharge = 10;
 // getway initialized
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+const calculateOrderAmount = async (items) => {
+    let amount = 0;
+    for (const item of items) {
+        const product = await productModel.findById(item._id);
+        if (product) {
+            amount += product.price * item.quantity;
+        }
+    }
+    return amount + deliveryCharge;
+};
+
 const placeOrder = async(req,res) =>{
     try {
-        const {userId,items,amount,address,paymentMethod}= req.body;
+        const {userId,items,address,paymentMethod}= req.body;
+        
+        const amount = await calculateOrderAmount(items);
 
         const orderData = {
             userId,
@@ -38,8 +52,10 @@ const placeOrder = async(req,res) =>{
 
 const placeOrderStripe = async(req,res) =>{
     try{
-        const {userId,items,amount,address,paymentMethod}= req.body;
+        const {userId,items,address,paymentMethod}= req.body;
         const {origin}= req.headers;
+
+        const amount = await calculateOrderAmount(items);
 
          const orderData = {
             userId,
@@ -54,17 +70,21 @@ const placeOrderStripe = async(req,res) =>{
         const newOrder = new orderModel(orderData);
         await newOrder.save();
 
-        const line_items = items.map((item)=>({
-            price_data :{
-                currency:currency,
-                product_data:{
-                    name: item.name,
-                },
-                unit_amount : item.price * 100,
+        const line_items = await Promise.all(items.map(async (item)=>{
+            const product = await productModel.findById(item._id);
+            return {
+                price_data :{
+                    currency:currency,
+                    product_data:{
+                        name: product.name,
+                    },
+                    unit_amount : product.price * 100,
 
-            },
-            quantity: item.quantity,
+                },
+                quantity: item.quantity,
+            }
         }))
+        
         line_items.push({
             price_data :{
                 currency:currency,
@@ -96,7 +116,15 @@ const placeOrderStripe = async(req,res) =>{
 const verifyStripe = async(req,res)=>{
     const {orderId,success,userId}= req.body;
     try {
-        if(success===true){
+        const order = await orderModel.findById(orderId);
+        if (!order) {
+            return res.json({success:false, message: 'Order not found'});
+        }
+        if (order.userId !== userId) {
+            return res.json({success:false, message: 'Unauthorized'});
+        }
+
+        if(success === 'true' || success === true){
             await orderModel.findByIdAndUpdate(orderId,{payment:true});
             await userModel.findByIdAndUpdate(userId,{cartData:{}});
             res.json({success:true});

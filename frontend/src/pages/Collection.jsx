@@ -42,25 +42,22 @@ const applyFilter = () =>{
   if(subCategory.length > 0){
     productsCopy = productsCopy.filter(item => subCategory.includes(item.subCategory));
   }
+  
+  // Apply sorting after filtering
+  switch(sortType){
+    case 'low-high':
+      productsCopy.sort((a,b)=>(a.price - b.price));
+      break;
+    case 'high-low':
+      productsCopy.sort((a,b)=>(b.price-a.price));
+      break;
+    default:
+      break;
+  }
+  
   setFilterProducts(productsCopy);
 }
 
-const sortProduct = () =>{
-  let fpCopy = filterProducts.slice();
-  switch(sortType){
-    case 'low-high':
-      setFilterProducts(fpCopy.sort((a,b)=>(a.price - b.price)));
-      break;
-    case 'high-low':
-      setFilterProducts(fpCopy.sort((a,b)=>(b.price-a.price)));
-      break;
-    default:
-      applyFilter();
-      break;
-
-  }
-}
-//   useEffect(() => {
 //   if (Array.isArray(products)) {
 //     setFilterProducts(products);
 //   }
@@ -72,11 +69,7 @@ const sortProduct = () =>{
 
 useEffect(()=>{
   applyFilter();
-},[category,subCategory,search,showSearch,products]);
-
-useEffect(()=>{
-  sortProduct();
-},[sortType])
+},[category,subCategory,search,showSearch,products,sortType]);
 
   return (
     <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t'>

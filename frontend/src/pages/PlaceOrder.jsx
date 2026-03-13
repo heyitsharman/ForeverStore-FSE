@@ -75,6 +75,10 @@ const onSubmitHandler = async (e)=>{
         }
         break;
 
+      case 'razorpay':
+        toast.error('Razorpay payment method is not implemented yet');
+        break;
+
       default:
         break;
     }
