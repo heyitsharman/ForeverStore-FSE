@@ -15,6 +15,7 @@ import SearchBar from './components/SearchBar'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Verify from './pages/Verify'
+import ProfilePage from './components/ProfilePage'
 
 const App = () => {
   return (
@@ -32,7 +33,8 @@ const App = () => {
         <Route path='/cart' element={<Cart></Cart>} />
         <Route path='/login' element={<Login></Login>}></Route>
         <Route path='/placeOrder' element={<PlaceOrder></PlaceOrder>}></Route>
-        <Route path='/orders' element={<Orders></Orders>}></Route>
+<Route path='/orders' element={<Orders></Orders>}></Route>
+        <Route path='/profile' element={<ProfilePage />} />
         <Route path='/verify' element={<Verify></Verify>}></Route>
       </Routes>
       <Footer/>
